@@ -61,8 +61,8 @@ function addQuote(){
 
         document.getElementById('newQuoteText').value = '';
         document.getElementById('newQuoteCategory').value = '';
-        
-        updateCategoryFilter(); // Update filter dropdown after adding a new quote
+
+        populateDropdown(); // Update filter dropdown after adding a new quote
     }
 
 
@@ -133,7 +133,8 @@ function exportQuotes() {
     URL.revokeObjectURL(url); // Clean up after download
 }
 
-function updateCategoryFilter() {
+
+function populateDropdown() {
     const categoryFilter = document.getElementById("categoryFilter");
     const categories = [...new Set(quotes.map(quote => quote.category))];
     categoryFilter.innerHTML = '<option value="">All</option>'; // Reset filter options
@@ -143,7 +144,6 @@ function updateCategoryFilter() {
         option.textContent = category;
         categoryFilter.appendChild(option);
     });
-
     restoreCategoryFilter(); // Restore the last selected category filter
 }
 
@@ -190,4 +190,4 @@ displayLastQuote();
 
 importFile();
 
-updateCategoryFilter();
+populateDropdown();
