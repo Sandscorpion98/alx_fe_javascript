@@ -61,7 +61,10 @@ function addQuote(){
 
         document.getElementById('newQuoteText').value = '';
         document.getElementById('newQuoteCategory').value = '';
+        
+        updateCategoryFilter(); // Update filter dropdown after adding a new quote
     }
+
 
 }
 
@@ -130,9 +133,54 @@ function exportQuotes() {
     URL.revokeObjectURL(url); // Clean up after download
 }
 
+function updateCategoryFilter() {
+    const categoryFilter = document.getElementById("categoryFilter");
+    const categories = [...new Set(quotes.map(quote => quote.category))];
+    categoryFilter.innerHTML = '<option value="">All</option>'; // Reset filter options
+    categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+    });
+
+    restoreCategoryFilter(); // Restore the last selected category filter
+}
+
+function filterQuotes() {
+    const categoryFilter = document.getElementById("categoryFilter").value;
+    const quoteDisplay = document.getElementById("quoteDisplay");
+    quoteDisplay.innerHTML = '';
+    const filteredQuotes = categoryFilter ? quotes.filter(quote => quote.category === categoryFilter) : quotes;
+    filteredQuotes.forEach(quote => {
+        const display = document.createElement("p");
+        const quoteText = document.createTextNode(`"${quote.text}" - ${quote.category}`);
+        display.appendChild(quoteText);
+        quoteDisplay.appendChild(display);
+
+    });
+
+    saveCategoryFilter(categoryFilter); // Save the selected category filter
+}
+
+function saveCategoryFilter(category) {
+    window.localStorage.setItem('selectedCategory', category);
+}
+
+function restoreCategoryFilter() {
+    const savedCategory = window.localStorage.getItem('selectedCategory');
+    if (savedCategory) {
+        const categoryFilter = document.getElementById("categoryFilter");
+        categoryFilter.value = savedCategory;
+        filterQuotes(); // Filter quotes based on the saved category
+    }
+}
+
 const newQuote = document.getElementById('newQuote');
 
 document.getElementById('exportQuotes').addEventListener("click", exportQuotes);
+
+document.getElementById('categoryFilter').addEventListener("change", filterQuotes);
 
 newQuote.addEventListener("click", showRandomQuote);
 
@@ -141,3 +189,5 @@ createAddQuoteForm();
 displayLastQuote();
 
 importFile();
+
+updateCategoryFilter();
