@@ -45,6 +45,35 @@ function addQuote(){
 }
 
 
+function createAddQuoteForm() {
+
+    const formDiv = document.getElementById("addQuoteForm");
+
+    const textInput = document.createElement("input");
+
+    textInput.setAttribute("type", "text");
+    textInput.setAttribute("id", "newQuoteText");
+    textInput.setAttribute("placeholder", "Quote text");
+
+    const categoryInput = document.createElement("input");
+    categoryInput.setAttribute("type", "text");
+    categoryInput.setAttribute("id", "newQuoteCategory");
+    categoryInput.setAttribute("placeholder", "Quote category");
+
+    const addButton = document.createElement("button");
+    addButton.setAttribute("id", "addQuoteButton");
+    addButton.textContent = "Add Quote";
+
+    formDiv.appendChild(textInput);
+    formDiv.appendChild(categoryInput);
+    formDiv.appendChild(addButton);
+
+    addButton.addEventListener("click", addQuote);
+}
+
+
 const newQuote = document.getElementById('newQuote');
 
 newQuote.addEventListener("click", showRandomQuote);
+
+createAddQuoteForm();
