@@ -62,7 +62,7 @@ function addQuote(){
         document.getElementById('newQuoteText').value = '';
         document.getElementById('newQuoteCategory').value = '';
 
-        populateDropdown(); // Update filter dropdown after adding a new quote
+        populateCategories(); // Update filter dropdown after adding a new quote
     }
 
 
@@ -134,7 +134,7 @@ function exportQuotes() {
 }
 
 
-function populateDropdown() {
+function populateCategories() {
     const categoryFilter = document.getElementById("categoryFilter");
     const categories = [...new Set(quotes.map(quote => quote.category))];
     categoryFilter.innerHTML = '<option value="">All</option>'; // Reset filter options
@@ -190,4 +190,4 @@ displayLastQuote();
 
 importFile();
 
-populateDropdown();
+populateCategories();
