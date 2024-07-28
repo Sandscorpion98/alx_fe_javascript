@@ -188,6 +188,7 @@ async function fetchQuotesFromServer() {
 }
 
 
+
 function updateLocalStorageWithFetchedQuotes(fetchedQuotes) {
     const localQuotes = JSON.parse(window.localStorage.getItem('quotes')) || [];
     const mergedQuotes = mergeQuotes(localQuotes, fetchedQuotes);
