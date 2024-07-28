@@ -196,7 +196,7 @@ async function fetchQuotesFromServer() {
         const response = await fetch('https://jsonplaceholder.typicode.com/posts');
         const data = await response.json();
         const fetchedQuotes = data.map(item => ({ text: item.title, category: 'Fetched' }));
-        updateLocalStorageWithFetchedQuotes(fetchedQuotes);
+        syncQuotes(fetchedQuotes);
     } catch (error) {
         console.error('Error fetching quotes:', error);
     }
@@ -204,7 +204,7 @@ async function fetchQuotesFromServer() {
 
 
 
-function updateLocalStorageWithFetchedQuotes(fetchedQuotes) {
+function syncQuotes(fetchedQuotes) {
     const localQuotes = JSON.parse(window.localStorage.getItem('quotes')) || [];
     const mergedQuotes = mergeQuotes(localQuotes, fetchedQuotes);
     window.localStorage.setItem('quotes', JSON.stringify(mergedQuotes));
