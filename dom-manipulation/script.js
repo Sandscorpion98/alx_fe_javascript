@@ -176,7 +176,7 @@ function restoreCategoryFilter() {
     }
 }
 
-async function fetchQuotes() {
+async function fetchQuotesFromServer() {
     try {
         const response = await fetch('https://jsonplaceholder.typicode.com/posts');
         const data = await response.json();
@@ -263,7 +263,7 @@ importFile();
 
 populateCategories();
 
-fetchQuotes() ;
+fetchQuotesFromServer() ;
 
 // Periodic data fetching every 30 seconds
-setInterval(fetchQuotes, 1000000);
+setInterval(fetchQuotesFromServer, 1000000);
