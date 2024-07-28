@@ -176,6 +176,77 @@ function restoreCategoryFilter() {
     }
 }
 
+async function fetchQuotes() {
+    try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+        const data = await response.json();
+        const fetchedQuotes = data.map(item => ({ text: item.title, category: 'Fetched' }));
+        updateLocalStorageWithFetchedQuotes(fetchedQuotes);
+    } catch (error) {
+        console.error('Error fetching quotes:', error);
+    }
+}
+
+
+function updateLocalStorageWithFetchedQuotes(fetchedQuotes) {
+    const localQuotes = JSON.parse(window.localStorage.getItem('quotes')) || [];
+    const mergedQuotes = mergeQuotes(localQuotes, fetchedQuotes);
+    window.localStorage.setItem('quotes', JSON.stringify(mergedQuotes));
+    quotes.length = 0;
+    quotes.push(...mergedQuotes);
+    populateCategories(); // Update dropdown after merging new quotes
+}
+
+function mergeQuotes(localQuotes, fetchedQuotes) {
+    const allQuotes = [...localQuotes, ...fetchedQuotes];
+    const uniqueQuotes = Array.from(new Set(allQuotes.map(q => q.text)))
+        .map(text => allQuotes.find(q => q.text === text));
+    return uniqueQuotes;
+}
+
+
+function handleConflicts(conflicts) {
+    const conflictResolutionDiv = document.getElementById('conflictResolution');
+    conflictResolutionDiv.innerHTML = '<h3>Resolve Conflicts</h3>';
+    conflicts.forEach(conflict => {
+        const conflictDiv = document.createElement('div');
+        conflictDiv.innerHTML = '<h4>Conflict:</h4>';
+        conflict.forEach(quote => {
+            const quoteText = document.createTextNode(`"${quote.text}" - ${quote.category}`);
+            const quoteDiv = document.createElement('div');
+            quoteDiv.appendChild(quoteText);
+            const keepButton = document.createElement('button');
+            keepButton.textContent = 'Keep';
+            keepButton.addEventListener('click', () => {
+                resolveConflict(quote);
+                conflictResolutionDiv.removeChild(conflictDiv);
+            });
+            quoteDiv.appendChild(keepButton);
+            conflictDiv.appendChild(quoteDiv);
+        });
+        conflictResolutionDiv.appendChild(conflictDiv);
+    });
+}
+
+function resolveConflict(quote) {
+    const localQuotes = JSON.parse(window.localStorage.getItem('quotes')) || [];
+    const updatedQuotes = localQuotes.filter(q => q.text !== quote.text);
+    updatedQuotes.push(quote);
+    window.localStorage.setItem('quotes', JSON.stringify(updatedQuotes));
+    quotes.length = 0;
+    quotes.push(...updatedQuotes);
+    populateDropdown(); // Update dropdown after resolving conflict
+    displayNotification('Conflict resolved.');
+}
+
+function displayNotification(message) {
+    const notificationDiv = document.getElementById('notification');
+    notificationDiv.innerHTML = `<p>${message}</p>`;
+    setTimeout(() => {
+        notificationDiv.innerHTML = '';
+    }, 3000);
+}
+
 const newQuote = document.getElementById('newQuote');
 
 document.getElementById('exportQuotes').addEventListener("click", exportQuotes);
@@ -191,3 +262,8 @@ displayLastQuote();
 importFile();
 
 populateCategories();
+
+fetchQuotes() ;
+
+// Periodic data fetching every 30 seconds
+setInterval(fetchQuotes, 1000000);
