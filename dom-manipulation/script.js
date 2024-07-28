@@ -252,7 +252,7 @@ function resolveConflict(quote) {
     quotes.length = 0;
     quotes.push(...updatedQuotes);
     populateDropdown(); // Update dropdown after resolving conflict
-    displayNotification('Conflict resolved.');
+    displayNotification('Quotes synced with server!.');
 }
 
 function displayNotification(message) {
