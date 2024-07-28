@@ -48,24 +48,39 @@ function displayLastQuote() {
     }
 }
 
-function addQuote(){
-
+async function addQuote() {
     const newQuoteText = document.getElementById("newQuoteText").value;
-
     const newQuoteCategory = document.getElementById("newQuoteCategory").value;
-
     if (newQuoteText && newQuoteCategory) {
-        quotes.push({text : newQuoteText, category : newQuoteCategory});
-
+        const newQuote = { text: newQuoteText, category: newQuoteCategory };
+        quotes.push(newQuote);
         window.localStorage.setItem('quotes', JSON.stringify(quotes));
-
         document.getElementById('newQuoteText').value = '';
         document.getElementById('newQuoteCategory').value = '';
+        populateDropdown(); // Update dropdown after adding a new quote
 
-        populateCategories(); // Update filter dropdown after adding a new quote
+        try {
+            await postQuoteToServer(newQuote);
+            displayNotification('Quote added successfully and posted to server.');
+        } catch (error) {
+            displayNotification('Error posting quote to server.');
+            console.error('Error posting quote:', error);
+        }
     }
+}
 
-
+async function postQuoteToServer(quote) {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(quote)
+    });
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json();
 }
 
 
